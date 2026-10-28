@@ -37,14 +37,20 @@ class ToolCallDecision(DecisionModel):
 class ClarificationDecision(DecisionModel):
     kind: Literal["clarification"]
     # TODO 1.1: Add question: str and missing_fields: list[str].
+    question: str
+    missing_fields: list[str]
 
 
 class FinalDecision(DecisionModel):
     kind: Literal["final"]
     # TODO 1.2: Add response: AgentResponse.
+    response: AgentResponse
 
 
 # TODO 1.3: Wrap this union in Annotated[..., Field(discriminator="kind")].
-AgentDecision = ToolCallDecision | ClarificationDecision | FinalDecision
+AgentDecision = Annotated[
+    ToolCallDecision | ClarificationDecision | FinalDecision,
+    Field(discriminator="kind"),
+]
 
 DecisionAdapter = TypeAdapter(AgentDecision)
